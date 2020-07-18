@@ -22,9 +22,9 @@ app.post('/', whatDoUwant)
 app.get('/showResults', showResultsHanndler)
 app.post('/addToList', addToListHandler)
 app.get('/showmyList', showmyListHanndler)
+app.post('/details/:movie_id', showdetailsHanndler)
+app.put('/update/:movie_id', updateHanndler)
 
-
-//________________________________________________________
 
 
 
@@ -56,7 +56,7 @@ function whatDoUwant(req, res) {
 
 
 function ObjMaker(data) {
-    this.title = data.name || 'not found'
+    this.title = data.name ||data.title|| 'not found'
     this.poster_path = `https://image.tmdb.org/t/p/w500/${data.poster_path}` || 'not found'
     this.vote_count = data.vote_count || 'not found'
     this.overview = data.overview || 'not found'
@@ -94,12 +94,38 @@ function showmyListHanndler(req, res) {
     client.query(SQL).then(results => {
         res.render('pages/myList.ejs', { data: results.rows })
     })
+    .catch((err) => {
+        errorHandler(err, req, res)
+    })
+}
 
+//________________________________________________________
+
+function showdetailsHanndler(req,res){
+    const SQL  ='SELECT * FROM movetable WHERE id=$1;'
+    const VALUES=[req.params.movie_id]
+    client.query(SQL, VALUES).then(results => {
+        res.render('pages/details.ejs',{data:results.rows[0]})
+    })
+    .catch((err) => {
+        errorHandler(err, req, res)
+    })
 }
 
 
-
-
+//________________________________________________________
+function updateHanndler(req,res){
+    const { title, poster_path, vote_count, overview } = req.body
+    const SQL='UPDATE movetable SET title=$1, poster_path=$2, vote_count=$3, overview=$4 WHERE id=$5;'
+const VALUES=[title, poster_path, vote_count, overview,req.params.movie_id]
+client.query(SQL, VALUES).then(results => {
+    // res.redirect(`/details/${req.params.movie_id}`)
+    res.render('pages/details.ejs',{data:results.rows[0]})
+    })
+    .catch((err) => {
+        errorHandler(err, req, res)
+    })
+}
 
 
 

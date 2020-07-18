@@ -11,10 +11,11 @@
         <section>
             <h3><%=val.title%></h3>
             <img src="<%=val.poster_path%>" alt="">
-            <p><%=val.vote_count%></p>
-            <p><%=val.overview%></p>
+          
         </section>
-
+        <form action="/details/<%=val.id%>" method="POST">
+                       <button>show details</button>
+        </form>
         <% })%>
     </div>
 </body>
