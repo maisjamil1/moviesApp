@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div>
+        <%data.forEach((val)=>{%>
+        <section>
+            <h3><%=val.title%></h3>
+            <img src="<%=val.poster_path%>" alt="">
+            <p><%=val.vote_count%></p>
+            <p><%=val.overview%></p>
+        </section>
+
+        <form action="/addToList" method="POST">
+            <input type="text" name="title" value="<%=val.title%>" style="display: none;" >
+            <input type="text" name="poster_path" value="<%=val.poster_path%>"style="display: none;">
+            <input type="text" name="vote_count" value="<%=val.vote_count%>"style="display: none;">
+            <input type="text" name="overview" value="<%=val.overview%>" style="display: none;">
+            <button>add to my list</button>
+        </form>
+        <% })%>
+    </div>
+</body>
+
+</html>
