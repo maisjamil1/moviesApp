@@ -18,24 +18,16 @@ app.set('view engine', 'ejs')
 //________________________________________________________
 //routs
 app.get('/', renerHomePage)
-app.post('/', whatDoUwant)
+app.post('/', whatDoUwant)//ممكن استغني عنها وبس اعتمد ع git-req.query
 app.get('/showResults', showResultsHanndler)
 app.post('/addToList', addToListHandler)
 app.get('/showmyList', showmyListHanndler)
 app.post('/details/:movie_id', showdetailsHanndler)
 app.put('/update/:movie_id',updateHanndler)
 app.delete('/delete/:movie_id',deleteHanndler)
+app.use('*', notFoundHandler)
 
-function deleteHanndler(req,res){
-    const VALUES=[req.params.movie_id]
-    const SQL ='DELETE FROM movetable WHERE id=$1;'
-    client.query(SQL, VALUES).then(results => {
-        res.redirect('/showmyList')
-    })
-    .catch((err) => {
-        errorHandler(err, req, res)
-    })
-}
+
 
 //________________________________________________________
 function renerHomePage(req, res) {
@@ -133,33 +125,26 @@ client.query(SQL, VALUES).then(() => {
     client.query(SQL2, VALUES2).then(results2 => {
         res.render('pages/details.ejs',{data:results2.rows[0]})
     })
-
+    
     // res.redirect(`/details/${req.params.movie_id}`);//مفروض يزبط بس مش زابط غريب 
-   
+    
+})
+.catch((err) => {
+    errorHandler(err, req, res)
+})
+}
+
+//________________________________________________________
+function deleteHanndler(req,res){
+    const VALUES=[req.params.movie_id]
+    const SQL ='DELETE FROM movetable WHERE id=$1;'
+    client.query(SQL, VALUES).then(results => {
+        res.redirect('/showmyList')
     })
     .catch((err) => {
         errorHandler(err, req, res)
     })
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //________________________________________________________
@@ -168,7 +153,6 @@ function test(req, res) {
     res.send('hiiiiiiiiiiiiiiiii ')
 }
 //________________________________________________________
-app.use('*', notFoundHandler)
 function notFoundHandler(req, res) {
     res.status(404).send('page not found')
 }
