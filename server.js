@@ -23,11 +23,19 @@ app.get('/showResults', showResultsHanndler)
 app.post('/addToList', addToListHandler)
 app.get('/showmyList', showmyListHanndler)
 app.post('/details/:movie_id', showdetailsHanndler)
-app.put('/update/:movie_id', updateHanndler)
+app.put('/update/:movie_id',updateHanndler)
+app.delete('/delete/:movie_id',deleteHanndler)
 
-
-
-
+function deleteHanndler(req,res){
+    const VALUES=[req.params.movie_id]
+    const SQL ='DELETE FROM movetable WHERE id=$1;'
+    client.query(SQL, VALUES).then(results => {
+        res.redirect('/showmyList')
+    })
+    .catch((err) => {
+        errorHandler(err, req, res)
+    })
+}
 
 //________________________________________________________
 function renerHomePage(req, res) {
@@ -58,7 +66,7 @@ function whatDoUwant(req, res) {
 function ObjMaker(data) {
     this.title = data.name ||data.title|| 'not found'
     this.poster_path = `https://image.tmdb.org/t/p/w500/${data.poster_path}` || 'not found'
-    this.vote_count = data.vote_count || 'not found'
+    this.vote_count = data.vote_count || 0// هون بستقبل بس ارقام لانو كتبت بالسكيما هيك
     this.overview = data.overview || 'not found'
 
 }
@@ -114,18 +122,28 @@ function showdetailsHanndler(req,res){
 
 
 //________________________________________________________
-function updateHanndler(req,res){
-    const { title, poster_path, vote_count, overview } = req.body
-    const SQL='UPDATE movetable SET title=$1, poster_path=$2, vote_count=$3, overview=$4 WHERE id=$5;'
+function updateHanndler (req,res) {
+    let { title, poster_path, vote_count, overview } = req.body
+    let SQL='UPDATE movetable SET title=$1, poster_path=$2, vote_count=$3, overview=$4 WHERE id=$5;'
 const VALUES=[title, poster_path, vote_count, overview,req.params.movie_id]
-client.query(SQL, VALUES).then(results => {
-    // res.redirect(`/details/${req.params.movie_id}`)
-    res.render('pages/details.ejs',{data:results.rows[0]})
+// console.log(VALUES);
+client.query(SQL, VALUES).then(() => {
+    const SQL2  ='SELECT * FROM movetable WHERE id=$1;'
+    const VALUES2=[req.params.movie_id]
+    client.query(SQL2, VALUES2).then(results2 => {
+        res.render('pages/details.ejs',{data:results2.rows[0]})
+    })
+
+    // res.redirect(`/details/${req.params.movie_id}`);//مفروض يزبط بس مش زابط غريب 
+   
     })
     .catch((err) => {
         errorHandler(err, req, res)
     })
 }
+
+
+
 
 
 

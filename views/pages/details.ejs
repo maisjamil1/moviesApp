@@ -14,12 +14,15 @@
                 <p><%=data.vote_count%></p>
                 <p><%=data.overview%></p>
             </section>
-            <form action="/update/<%=data.id%>?_method=PUT" method="POST">
+            <form action='/update/<%=data.id%>?_method=PUT' method="POST">
                 <input type="text" name="title" value="<%=data.title%>"  >
                 <input type="text" name="poster_path" value="<%=data.poster_path%>">
                 <input type="text" name="vote_count" value="<%=data.vote_count%>">
                 <input type="text" name="overview" value="<%=data.overview%>" >
                 <button>update</button>
+            </form>
+            <form action="/delete/<%=data.id%>?_method=DELETE" method="POST">
+                <button>delete</button>
             </form>
       
       
